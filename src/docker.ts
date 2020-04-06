@@ -45,15 +45,8 @@ export const docker = async () => {
 
   await runInGroup('Building image', async () => {
     const buildErrorCode = await exec(
-      'docker',
-      [
-        'build',
-        '-f',
-        dockerfile,
-        '-t',
-        `${dockerRegistry}/${imageName}:${dockerTag}`,
-        `.`,
-      ],
+      `docker build -f ${dockerfile} -t ${dockerRegistry}/${imageName}:${dockerTag} .`,
+      [],
       {
         cwd: workingDirectory,
       },
@@ -64,10 +57,9 @@ export const docker = async () => {
   });
 
   await runInGroup('Pushing image', async () => {
-    const pushErrorCode = await exec('docker', [
-      'push',
-      `${dockerRegistry}/${imageName}:${dockerTag}`,
-    ]);
+    const pushErrorCode = await exec(
+      `docker push ${dockerRegistry}/${imageName}:${dockerTag}`,
+    );
     if (pushErrorCode !== 0) {
       throw Error('Pushing Docker image failed.');
     }

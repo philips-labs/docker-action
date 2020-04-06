@@ -89,15 +89,8 @@ describe('Docker action', () => {
     await docker();
 
     await expect(exec).toHaveBeenCalledWith(
-      'docker',
-      [
-        'build',
-        '-f',
-        'Dockerfile',
-        '-t',
-        'test-registry.io/HelloWorld:develop',
-        '.',
-      ],
+      'docker build -f Dockerfile -t test-registry.io/HelloWorld:develop .',
+      [],
       {
         cwd: 'src',
       },
@@ -117,10 +110,9 @@ describe('Docker action', () => {
 
     await docker();
 
-    await expect(exec).toHaveBeenCalledWith('docker', [
-      'push',
-      `test-registry.io/HelloWorld:develop`,
-    ]);
+    await expect(exec).toHaveBeenCalledWith(
+      'docker push test-registry.io/HelloWorld:develop',
+    );
   });
 
   it('throws an error when pushing the docker image fails', async () => {
