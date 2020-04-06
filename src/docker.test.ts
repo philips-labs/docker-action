@@ -90,7 +90,14 @@ describe('Docker action', () => {
 
     await expect(exec).toHaveBeenCalledWith(
       'docker',
-      ['build', `-f Dockerfile`, `-t test-registry.io/HelloWorld:develop`, `.`],
+      [
+        'build',
+        '-f',
+        'Dockerfile',
+        '-t',
+        'test-registry.io/HelloWorld:develop',
+        '.',
+      ],
       {
         cwd: 'src',
       },

@@ -48,8 +48,10 @@ export const docker = async () => {
       'docker',
       [
         'build',
-        `-f ${dockerfile}`,
-        `-t ${dockerRegistry}/${imageName}:${dockerTag}`,
+        '-f',
+        dockerfile,
+        '-t',
+        `${dockerRegistry}/${imageName}:${dockerTag}`,
         `.`,
       ],
       {
