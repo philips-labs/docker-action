@@ -1,0 +1,28 @@
+name: 'Docker Action'
+description: 'Github Action to build and push a Docker image'
+inputs:
+  imageName:
+    description: 'The name of the docker image'
+    required: true
+  workingDirectory:
+    description: 'The working directory from which to run the docker commands'
+    required: true
+    default: '.'
+  dockerRegistry:
+    description: 'The registry to push the image name'
+    required: true
+    default: 'docker.io'
+  dockerfile:
+    description: 'Path to Dockerfile'
+    required: true
+    default: 'Dockerfile'
+  latestBranch:
+    description: 'From which branch to create latest releases'
+    required: true
+    default: 'master'
+outputs:
+  dockerTag:
+    description: 'The docker tag of the built image'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
