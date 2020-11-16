@@ -29,8 +29,12 @@ export const docker = async () => {
   const dockerRegistry = core.getInput('dockerRegistry', { required: true });
   const dockerfile = core.getInput('dockerfile', { required: true });
   const latestBranch = core.getInput('latestBranch', { required: true });
+  const currentBranch = core.getInput('currentBranch');
 
-  const dockerTag = getDockerTag(process.env['GITHUB_REF']!, latestBranch);
+  const dockerTag = getDockerTag(
+    currentBranch !== '' ? currentBranch : process.env['GITHUB_REF']!,
+    latestBranch,
+  );
   core.setOutput('dockerTag', dockerTag);
 
   core.info(`

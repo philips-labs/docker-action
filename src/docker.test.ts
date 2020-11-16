@@ -17,6 +17,7 @@ describe('Docker action', () => {
     process.env['INPUT_DOCKERFILE'] = 'Dockerfile';
     process.env['INPUT_LATESTBRANCH'] = 'master';
     process.env['GITHUB_REF'] = 'refs/heads/develop';
+    delete process.env['INPUT_CURRENTBRANCH'];
   });
 
   it.each`
@@ -59,6 +60,21 @@ describe('Docker action', () => {
     await expect(setOutput).toHaveBeenCalledWith(
       'dockerTag',
       'a-feature-branch',
+    );
+  });
+
+  it('should determine the tag from currentBranch input', async () => {
+    process.env['GITHUB_REF'] = 'refs/heads/feature/a-feature-branch';
+    process.env['INPUT_CURRENTBRANCH'] =
+      'refs/heads/feature/another-feature-branch';
+    const mockedExec = exec as jest.Mock<Promise<number>>;
+    mockedExec.mockReturnValue(Promise.resolve(0));
+
+    await docker();
+
+    await expect(setOutput).toHaveBeenCalledWith(
+      'dockerTag',
+      'another-feature-branch',
     );
   });
 
