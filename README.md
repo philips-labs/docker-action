@@ -4,13 +4,14 @@ A Github action for building and pushing docker images.
 
 ## Inputs
 
-| Input            | Description                                                                |
-| ---------------- | :------------------------------------------------------------------------- |
-| imageName        | The name of the docker image                                               |
-| workingDirectory | The working directory from which to run the docker commands (default: `.`) |
-| dockerRegistry   | The registry to push the image name (default: `docker.io`)                 |
-| dockerfile       | Path to Dockerfile (default: `Dockerfile`)                                 |
-| latestBranch     | From which branch to create latest releases (default: `master`)            |
+| Input            | Description                                                                                            |
+| ---------------- | :------------------------------------------------------------------------------------------------------|
+| imageName        | The name of the docker image                                                                           |
+| workingDirectory | The working directory from which to run the docker commands (default: `.`)                             |
+| dockerRegistry   | The registry to push the image name (default: `docker.io`)                                             |
+| dockerfile       | Path to Dockerfile (default: `Dockerfile`)                                                             |
+| latestBranch     | From which branch to create latest releases (default: `master`)                                        |
+| buildArgs        | List of environment variables that are passed to docker via `--build-arg <BUILD_ARG>` (default: empty) |
 
 ## Outputs
 
