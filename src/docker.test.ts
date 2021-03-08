@@ -17,6 +17,7 @@ describe('Docker action', () => {
     process.env['INPUT_DOCKERFILE'] = 'Dockerfile';
     process.env['INPUT_LATESTBRANCH'] = 'master';
     process.env['GITHUB_REF'] = 'refs/heads/develop';
+    delete process.env['INPUT_BUILDARGS'];
     delete process.env['INPUT_CURRENTBRANCH'];
   });
 
@@ -96,6 +97,22 @@ describe('Docker action', () => {
     await docker();
 
     await expect(setOutput).toHaveBeenCalledWith('dockerTag', 'latest');
+  });
+
+  it('should add the build args as --build-arg to the docker build', async () => {
+    process.env['INPUT_BUILDARGS'] = 'HOST=localhost\nPORT=8080';
+    const mockedExec = exec as jest.Mock<Promise<number>>;
+    mockedExec.mockReturnValue(Promise.resolve(0));
+
+    await docker();
+
+    await expect(exec).toHaveBeenCalledWith(
+      'docker build --build-arg HOST=localhost --build-arg PORT=8080 -f Dockerfile -t test-registry.io/HelloWorld:develop .',
+      [],
+      {
+        cwd: 'src',
+      },
+    );
   });
 
   it('should build the docker image', async () => {
