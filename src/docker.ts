@@ -30,6 +30,7 @@ export const docker = async () => {
   const dockerfile = core.getInput('dockerfile', { required: true });
   const latestBranch = core.getInput('latestBranch', { required: true });
   const currentBranch = core.getInput('currentBranch');
+  const buildArgs: string[] = core.getInput('buildArgs').split("\n").filter(x => x !== "");
 
   const dockerTag = getDockerTag(
     currentBranch !== '' ? currentBranch : process.env['GITHUB_REF']!,
@@ -45,11 +46,12 @@ export const docker = async () => {
         WorkingDirectory: ${workingDirectory}
         LatestBranch    : ${latestBranch}
         DockerTag       : ${dockerTag}
+        BuildArgs       : ${buildArgs.join(' ')}
     `);
 
   await runInGroup('Building image', async () => {
     const buildErrorCode = await exec(
-      `docker build -f ${dockerfile} -t ${dockerRegistry}/${imageName}:${dockerTag} .`,
+      `docker build ${buildArgs.map(a => '--build-arg ' + a + ' ').join('')}-f ${dockerfile} -t ${dockerRegistry}/${imageName}:${dockerTag} .`,
       [],
       {
         cwd: workingDirectory,

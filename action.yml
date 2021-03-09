@@ -23,6 +23,9 @@ inputs:
   currentBranch:
     description: 'Optionally set the branch name to use for docker tag (some events do not set `GITHUB_REF` to current branch)'
     required: false
+  buildArgs:
+    description: 'Optionally enter a list of `VARIABLE=value` strings that will be passed each as `--build-arg VARIABLE=value` to docker'
+    required: false
 outputs:
   dockerTag:
     description: 'The docker tag of the built image'
