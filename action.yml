@@ -17,9 +17,8 @@ inputs:
     required: true
     default: 'Dockerfile'
   latestBranch:
-    description: 'From which branch to create latest releases'
-    required: true
-    default: 'master'
+    description: 'Optionally set the branch name used to create latest images from (by default this action will use `main` and `master`)'
+    required: false
   currentBranch:
     description: 'Optionally set the branch name to use for docker tag (some events do not set `GITHUB_REF` to current branch)'
     required: false
