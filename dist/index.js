@@ -1041,7 +1041,8 @@ async function runInGroup(name, fun) {
 function getDockerTag(githubRef, latestBranch) {
     const githubRefParts = githubRef.split('/');
     const branchOrTagName = githubRefParts[githubRefParts.length - 1];
-    if (githubRefParts[1] === 'heads' && branchOrTagName === latestBranch)
+    const latestBranches = latestBranch ? [latestBranch] : ['main', 'master'];
+    if (githubRefParts[1] === 'heads' && latestBranches.includes(branchOrTagName))
         return 'latest';
     return branchOrTagName;
 }
@@ -1052,10 +1053,13 @@ exports.docker = async () => {
     });
     const dockerRegistry = core.getInput('dockerRegistry', { required: true });
     const dockerfile = core.getInput('dockerfile', { required: true });
-    const latestBranch = core.getInput('latestBranch', { required: true });
+    const latestBranch = core.getInput('latestBranch');
     const currentBranch = core.getInput('currentBranch');
-    const buildArgs = core.getInput('buildArgs').split("\n").filter(x => x !== "");
-    const dockerTag = getDockerTag(currentBranch !== '' ? currentBranch : process.env['GITHUB_REF'], latestBranch);
+    const buildArgs = core
+        .getInput('buildArgs')
+        .split('\n')
+        .filter((x) => x !== '');
+    const dockerTag = getDockerTag(currentBranch !== '' ? currentBranch : process.env['GITHUB_REF'], latestBranch !== '' ? latestBranch : undefined);
     core.setOutput('dockerTag', dockerTag);
     core.info(`
         Using parameters:
@@ -1068,7 +1072,9 @@ exports.docker = async () => {
         BuildArgs       : ${buildArgs.join(' ')}
     `);
     await runInGroup('Building image', async () => {
-        const buildErrorCode = await exec_1.exec(`docker build ${buildArgs.map(a => '--build-arg ' + a + ' ').join('')}-f ${dockerfile} -t ${dockerRegistry}/${imageName}:${dockerTag} .`, [], {
+        const buildErrorCode = await exec_1.exec(`docker build ${buildArgs
+            .map((a) => '--build-arg ' + a + ' ')
+            .join('')}-f ${dockerfile} -t ${dockerRegistry}/${imageName}:${dockerTag} .`, [], {
             cwd: workingDirectory,
         });
         if (buildErrorCode !== 0) {
